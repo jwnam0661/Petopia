@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <package name="sitting" namespace="/" extends="default">
+
+		<action name="viewMessages">
+			<result>/jsp/Message.jsp</result>
+		</action>
+		
+		<action name="viewMessageList" class="org.petopia.action.SittingAction" method="viewMessageList">
+			<result type="json"></result>
+		</action>
+		
+		<action name="sendMessage" class="org.petopia.action.SittingAction" method="sendMessage">
+			<result type="chain">viewMessageList</result>
+		</action>
+		
+		<action name="getNewCounter" class="org.petopia.action.SittingAction" method="getNewCounter">
+			<result type="json"></result>
+		</action>
+		
+		<action name="updateToRead" class="org.petopia.action.SittingAction" method="updateToRead">
+			<result type="json"></result>
+		</action>
+		
+		<!-- 시팅 종료 -->
+		<action name="finishSitting" class="org.petopia.action.MemberAction" method="finishSitting">
+			<result type="json"></result>
+		</action>
+		
+		<!-- 시터 평가 -->
+		<action name="ratingSitter" class="org.petopia.action.SittingAction" method="ratingSitter">
+			<result type="redirect">completedMySittingPage</result>
+		</action>
+		
+		<action name="videochat">
+      		<result>/jsp/videochat.jsp</result>
+      	</action>
+      	
+      	<!-- 시터가 시팅을 수락/거절 -->
+      	<action name="responseSitting" class="org.petopia.action.SittingAction" method="responseSitting">
+      		<result type="redirect">progressSittingPage</result>
+      	</action>
+      	
+      	<!-- 멤버가 신청한 시팅을 취소 -->
+      	<action name="cancelRequestSitting" class="org.petopia.action.SittingAction" method="cancelRequestSitting">
+      		<result type="redirect">requestedMySittingPage</result>
+      	</action>
+      	
+      	<action name="pullVideoChat" class="org.petopia.action.SittingAction" method="pullVideoChat">
+      		<result type="json"></result>
+      	</action>
+      	
+      	<action name="updateVideoChatToCreated" class="org.petopia.action.SittingAction" method="updateVideoChatToCreated">
+      		<result type="json"></result>
+      	</action>
+      	
+      	<action name="updateVideoChatToNocreated" class="org.petopia.action.SittingAction" method="updateVideoChatToNocreated">
+      		<result type="json"></result>
+      	</action>
+      	
+      	
+    </package>
+
+</struts>

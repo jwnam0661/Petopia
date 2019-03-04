@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Sitting">
+
+	<resultMap type="Sitting" id="sittingResultMap">
+		<id property="sittingNo" column="sittingno"/>
+		<result property="memberNo" column="memberNo"/>
+		<result property="SitterNo" column="SitterNo"/>
+		<result property="PetNo" column="PetNo"/>
+		<result property="Status" column="Status"/>
+		<result property="requestDate" column="requestDate"/>
+		<result property="StartDate" column="StartDate"/>
+		<result property="EndDate" column="EndDate"/>
+		<result property="Option1" column="Option1"/>
+		<result property="Option2" column="Option2"/>
+		<result property="Option3" column="Option3"/>
+		<result property="Price" column="Price"/>
+		
+		<association property="sitter" select="Sitter.searchSitter" javaType="Sitter" column="sitterNo"/>
+		
+	</resultMap>
+
+	<insert id="requestSitting" parameterType="sitting">
+		INSERT INTO a2sitting(
+							  SittingNo
+							, memberNo
+							, SitterNo
+							, PetNo
+							, Status
+							, requestDate
+							, StartDate
+							, EndDate
+							, Option1
+							, Option2
+							, Option3
+							, Price
+							)
+						VALUES(
+							  SEQ_A2SITTING_SittingNo.nextval
+							, #{memberno}
+							, #{sitterNo}
+							, #{petNo}
+							, 'requested'
+							, SYSDATE
+							, #{startDate} <!-- TODO 날짜 형식 통일해서 반영해야 함  2016/04/12 -->
+							, #{endDate}
+							, #{option1} 
+							, #{option2}
+							, #{option3}
+							, #{Price}
+						)
+	</insert>
+	
+	<!-- 시팅 정보 출력 -->
+	<select id="sittingInfo" parameterType="int" resultType="sitting">
+		SELECT * FROM a2sitting WHERE sittingNo = #{sittingNo}
+	</select>
+	
+	<!-- 시팅 리스트 반환 -->
+	<select id="pullSittingList" parameterType="HashMap" resultType="sitting">
+		SELECT * FROM a2sitting WHERE status = #{status} AND memberNo = #{memberNo}
+	</select>
+	
+	<!-- 시팅 VO에 들어갈 메시지 리스트 출력 -->
+	<select id="messageList" parameterType="int" resultType="message">
+		SELECT * FROM a2message WHERE sittingNo = #{sittingNo} ORDER BY messageDate DESC
+	</select>
+	
+	<!-- 메시지 보내기 -->
+	<insert id="sendMessage" parameterType="message">
+		INSERT INTO a2message(sittingNo, messageNo, sendNo, receiveNo, messageDate, text, read) 
+					VALUES(
+						  #{sittingNo}
+						, SEQ_A2MESSAGE_MessageNo.nextval
+						, #{sendNo}
+						, #{receiveNo}
+						, SYSDATE
+						, #{text}
+						, 'new'
+						)
+		
+	</insert>
+	
+	<!-- 메시지의 new 세기 -->
+	<select id="getNewCounter" parameterType="HashMap" resultType="int">
+		SELECT COUNT(*) FROM a2message WHERE read = 'new' AND sendNo != #{sendNo} AND sittingNo = #{sittingNo}
+	</select>
+	
+	<!-- 메시지를 읽은 상태(read 칼럼을 read로)로 바꿈 -->
+	<update id="updateToRead" parameterType="HashMap">
+		UPDATE a2message SET read = 'read' WHERE sittingNo = #{sittingNo} AND sendNo != #{sendNo}
+	</update>
+	
+	<!-- 시팅을 종료함(status를 finished로 설정 -->
+	<update id="finishSitting" parameterType="int">
+		UPDATE a2sitting SET status = 'finished' where sittingNo = #{sittingNo}
+	</update>
+	
+	<insert id="ratingSitter" parameterType="SitterRating">
+		INSERT INTO a2sitterrating(
+						  ratingNo
+						, rating
+						, ratingDate
+						, memberNo
+						, sitterNo
+						, ratingComment
+						, sittingNo)
+					VALUES(
+						  SEQ_A2SitterRating_RatingNo.nextval
+						, #{rating}
+						, SYSDATE
+						, #{memberNo}
+						, #{sitterNo}
+						, #{ratingComment}
+						, #{sittingNo}
+					)
+	</insert>
+	
+	<!-- 시터가 시팅을 수락/거절함 -->
+	<update id="responseSitting" parameterType="HashMap">
+		UPDATE a2sitting SET status = #{response} WHERE sittingNo = #{sittingNo}
+	</update>
+	
+	<!-- 멤버가 자기가 신청한 시팅을 취소함 -->
+	<update id="cancelRequestSitting" parameterType="int">
+		UPDATE a2sitting SET status = 'canceled' WHERE sittingNo = #{sittingNo}
+	</update>
+	
+	<!-- 현재 시팅 No 가져오기 -->
+	<select id="pullSittingNoNow" resultType="int">
+		SELECT SEQ_A2SITTING_SittingNo.currval FROM dual
+	</select>
+	
+	<!-- 영상통화용 만들기 -->
+	<insert id="insertVideoChat" parameterType="int">
+		INSERT INTO a2videochat VALUES(
+								  #{sittingNo}
+								, 'nocreated'
+								, '1'
+								)
+	</insert>
+	
+	<!-- 영상통화용 불러오기 -->
+	<select id="pullVideoChat" parameterType="int" resultType="videoChat">
+		SELECT * FROM a2videochat WHERE sittingNo = #{sittingNo}
+	</select>
+	
+	<!-- 영상통화용 수정하기1 -->
+	<update id="updateVideoChatToCreated" parameterType="int">
+		UPDATE a2videochat SET status = 'created' WHERE sittingNo = #{sittingNo}
+	</update>
+	
+	<!-- 영상통화용 수정하기2 -->
+	<update id="updateVideoChatToNocreated" parameterType="int">
+		UPDATE a2videochat SET status = 'nocreated' WHERE sittingNo = #{sittingNo}
+	</update>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <package name="member" namespace="/" extends="default">
+	
+		<!-- 회원가입 -->
+		<action name="insertMember" class="org.petopia.action.MemberAction" method="insertMember">
+			<result type="json"></result><!-- ******회원가입 완료 창 필요할지도? -->
+		</action>
+		
+		<!-- 로그인 -->
+		<action name="logIn" class="org.petopia.action.MemberAction" method="logIn">
+			<result type="redirect">/main.action</result>
+		</action>
+		
+		<!-- 로그아웃 -->
+		<action name="logOut" class="org.petopia.action.MemberAction" method="logOut">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result type="redirect">/main.action</result>
+		</action>
+		
+		<!-- MY Page 이동 -->
+		<action name="myPage" class="org.petopia.action.MemberAction" method="myPage">
+			<result>/jsp/myPage.jsp</result>
+		</action>
+		
+		<!-- new MY Page 이동 (progress sitting창과 동일) -->
+		<action name="newMyPage" class="org.petopia.action.MemberAction" method="newMyPage">
+			<!-- <interceptor-ref name="loginInterceptorStack"/> -->
+			<result>/jsp/newMyPage.jsp</result>
+		</action>
+		
+		<!-- 신청한 시팅페이지 -->
+		<action name="requestedMySittingPage" class="org.petopia.action.MemberAction" method="requestedMySittingPage">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result>/jsp/requestedMySittingPage.jsp</result>
+		</action>
+		
+		<!-- 수락된 시팅페이지 -->
+		<action name="approvedMySittingPage" class="org.petopia.action.MemberAction" method="approvedMySittingPage">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result>/jsp/approvedMySittingPage.jsp</result>
+		</action>
+		
+		<!-- 완료된 시팅페이지 -->
+		<action name="completedMySittingPage" class="org.petopia.action.MemberAction" method="completedMySittingPage">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result>/jsp/completedMySittingPage.jsp</result>
+		</action>
+		
+		<!-- 펫시터 자격 신청 -->
+		<action name="askSitterQualification" class="org.petopia.action.MemberAction" method="askSitterQualification">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result>/jsp/newMyPage.jsp</result><!-- TODO: 펫시터자격신청현황 Page -->
+		</action>
+		
+		<!-- 펫시터 즐찾 기능 -->
+		<action name="insertFavorite" class="org.petopia.action.MemberAction" method="insertFavorite">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result type="json"></result>
+		</action>
+		
+		<!-- 펫시터 즐찾해제 기능 -->
+		<action name="insertFavorite" class="org.petopia.action.MemberAction" method="deleteFavorite">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result type="json"></result>
+		</action>
+		
+		<!-- 시팅신청 전, 이용약관페이지 -->
+		<action name="goAgreementOfUtilizationPage" class="org.petopia.action.MemberAction" method="goAgreementOfUtilizationPage">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result>/jsp/agreementPage.jsp</result>
+		</action>
+		
+		<!-- 시팅신청 페이지 -->
+		<action name="goAskSittingPage" class="org.petopia.action.MemberAction" method="goAskSittingPage">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result>/jsp/askSittingPage.jsp</result>
+		</action>
+		
+		<!-- 시팅신청 -->
+		<action name="askSitting" class="org.petopia.action.MemberAction" method="askSitting">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result type="redirect">/requestedMySittingPage.action</result>
+		</action>
+		
+		<!-- 시팅사진 확인 -->
+		<action name="checkSittingPhotoPage" class="org.petopia.action.MemberAction" method="checkSittingPhotoPage">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result>/jsp/checkPhoto.jsp</result>
+		</action>
+		
+		<!-- my pet list 페이지 -->
+		<action name="myPetListPage"  class="org.petopia.action.MemberAction" method="myPetListPage">
+			<interceptor-ref name="loginInterceptorStack"/>
+			<result>/jsp/myPetListPage.jsp</result>
+		</action>
+		
+		<action name="deleteNotMember" class="org.petopia.action.MemberAction" method="deleteNotMember">
+			<result type="json"></result>
+		</action>
+				
+    </package>
+
+</struts>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <package name="admin" namespace="/" extends="default">
+    
+    	<action name="adminMain" class="org.petopia.action.AdminAction" method="showSitterRequestList">
+    		<result>/jsp/adminMain.jsp</result>
+    	</action>
+
+		<action name="showSitterRequest" class="org.petopia.action.AdminAction" method="showSitterRequest">
+			<result></result>
+		</action>
+		
+		<action name="approveSitter" class="org.petopia.action.AdminAction" method="approveRequest">
+			<result type="redirect">/adminMain.action</result>
+		</action>
+		
+		<action name="refuseSitter" class="org.petopia.action.AdminAction" method="refuseSitter">
+			<result></result>
+		</action>
+      	
+    </package>
+
+</struts>

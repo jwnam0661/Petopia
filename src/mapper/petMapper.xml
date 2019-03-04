@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Pet">
+	
+	
+	<insert id="insertPet" parameterType="pet">
+		INSERT INTO a2pet VALUES(
+		#{memberNo}
+		, SEQ_A2PET_PetNo.nextVal
+		, #{name}
+		, #{category}
+		, #{species}
+		, #{ageClass}
+		, #{age}
+		, #{sex}
+		, #{neutralization}
+		, #{vaccine1}
+		, #{vaccine2}
+		, #{vaccine3}
+		, #{vaccine4}
+		, #{petComment}
+		, #{petSize}
+		)
+	</insert>
+	
+	<select id="getSequence" resultType="int">
+		select SEQ_A2PET_PetNo.currval from dual
+	</select>
+	
+	<update id="updatePet" parameterType="pet">
+		UPDATE a2pet SET
+		  name = #{name}
+		, category = #{category}
+		, species = #{species}
+		, ageclass = #{ageClass}
+		, age = #{age}
+		, sex = #{sex}
+		, neutralization = #{neutralization}
+		, vaccine1 = #{vaccine1}
+		, vaccine2 = #{vaccine2}
+		, vaccine3 = #{vaccine3}
+		, vaccine4 = #{vaccine4}
+		, petcomment = #{petComment}
+		, petsize = #{petSize}
+		)
+	</update>
+	
+	<select id="getPetInfo" parameterType="int" resultType="pet">
+		SELECT * FROM a2pet WHERE petNo = #{petNo}
+	</select>
+	
+	<select id="getPetList" parameterType="int" resultType="pet">
+		SELECT * FROM a2pet WHERE memberNo = #{memberNo}
+	</select>
+	
+	<insert id="insertPetPhoto" parameterType="photo">
+		insert into a2photo
+			(
+				photoNo
+				, category
+				, originalfile
+				, savedfile
+				, photoDate
+				, memberNo
+				, sitterNo
+				, sittingNo
+				, petNo
+			)
+		values
+			(
+				SEQ_A2PHOTO_PhotoNo.nextval
+				, #{category}
+				, #{originalfile}
+				, #{savedfile}
+				, sysdate
+				, #{memberNo}
+				, #{sitterNo}
+				, #{sittingNo}
+				, #{petNo}
+			)	
+	</insert>
+
+</mapper>

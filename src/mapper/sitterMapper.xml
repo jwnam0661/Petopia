@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Sitter">
+
+	<select id="searchMemberAddress" parameterType="int" resultType="string">
+		select address1 from a2member where memberno = #{memberNo}
+	</select>
+
+	<select id="searchMember" parameterType="int" resultType="member">
+		select * from a2member where memberno = #{memberNo}
+	</select>
+
+
+
+	<select id="searchSitter" parameterType="string" resultType="sitter">
+		SELECT
+		s.*,
+		m.address1 address1
+		FROM
+		(
+		select *
+		from A2MEMBER
+		where ADDRESS1 like '%'||#{loginMemberAddress}||'%') m
+		, A2SITTER s
+		WHERE
+		m.memberno = s.memberno
+	</select>
+	<!-- 검색 조건에 맞는 시터찾기 -->
+	<select id="searchAllSitter" parameterType="hashmap" resultType="sitter">
+		select
+	</select>
+
+	<select id="getAllSitterList" resultType="sitter">
+		select * from A2SITTER
+	</select>
+
+
+	<!-- 멤버와 시터 정보 함께 가져오기 위해 assciationResultMap 사용 -->
+	<resultMap type="sitter" id="associationResultMap">
+		<id property="memberNo" column="memberNo" />
+		<result property="sex" column="sex" />
+		<result property="age" column="age" />
+		<result property="availableCategory" column="availableCategory" />
+		<result property="availableNumber" column="availableNumber" />
+		<result property="availableSize" column="availableSize" />
+		<result property="houseCategory" column="houseCategory" />
+		<result property="sitterComment" column="sitterComment" />
+		<result property="license" column="license" />
+		<result property="status" column="status" />
+		<result property="pet" column="pet" />
+		<result property="sittingLength" column="sittingLength" />
+		<result property="option1" column="option1" />
+		<result property="option2" column="option2" />
+		<result property="option3" column="option3" />
+		<association property="memberSearch" column="memberNo" javaType="member">
+			<id column="memberNo_member" property="memberNo" />
+			<result column="name" property="name" />
+			<result column="address1" property="address1" />
+			<result column="address2" property="address2" />
+			<result column="memberID" property="memberID" />
+			<result column="lat" property="lat" />
+			<result column="lng" property="lng" />
+		</association>
+		<association property="photoSearch" column="memberNo"
+			javaType="photo">
+			<id column="photoNo" property="photoNo" />
+			<result column="originalfile" property="originalfile" />
+			<result column="savedfile" property="savedfile" />
+		</association>
+		<!-- 리스트 : <collection property="photos" javaType="arraylist" resultMap="photoResultMap"></collection> -->
+	</resultMap>
+
+	<!-- collection <resultMap type="photo" id="photoResultMap"> <id property="sitterNo" 
+		column="sitterNo"/> <result property="savedfile" column="savedfile"/> </resultMap> -->
+
+	<select id="searchAddressSitter" parameterType="hashmap"
+		resultMap="associationResultMap">
+		SELECT
+		s.*, m.address1, m.address2, m.memberID, m.lat, m.lng, p.photoNo
+		FROM
+		A2SITTER s
+		JOIN A2MEMBER m
+		ON s.memberNo = m.memberNo
+		JOIN A2PHOTO p
+		ON s.memberNo = p.sitterNo
+		WHERE
+		m.address1 LIKE '%'||#{address1}||'%' 
+		AND p.category = 'sitter'
+		<if test="availableCategory!=null">
+		AND s.availableCategory = #{availableCategory}
+        </if>
+		<if test="option1!=null">
+		AND	s.option1 = #{option1}
+		</if>
+		
+		<if test="option2!=null">
+		AND	s.option2 = #{option2}
+		</if>
+		
+		<if test="option3!=null">
+		AND	s.option3 = #{option3}
+		</if>
+		
+		
+	</select>
+	<!-- 메인페이지에서 맡길일, 찾을 일 검색 -->
+	<select id="searchCal" parameterType="hashmap" resultType="integer">
+	select memberNo
+	    from a2calendar where unavailabledate not between
+        #{takeDate} and #{returnDate}
+	</select>
+	<!-- 검색페이지에서 시터 사진 가져오기 -->
+	<select id="searchSitterPicture" parameterType="int" resultType="photo">
+		SELECT * FROM A2PHOTO WHERE photono = #{photoNo}
+	</select>
+
+	<!-- 시터 상세정보 가져오기 -->
+	<select id="searchDetailSitter" parameterType="int"
+		resultMap="associationResultMap">
+		SELECT
+		s.*, m.address1, m.address2, m.memberID
+		FROM
+		A2SITTER s
+		JOIN A2MEMBER m
+		ON s.memberNo = m.memberNo
+		WHERE
+		s.memberno = #{memberno}
+	</select>
+
+	<!-- 시터 상세페이지의 집사진 가져오기 -->
+	<select id="listHousePhotoNo" parameterType="int" resultType="photo">
+		SELECT
+		*
+		FROM
+		A2PHOTO
+		WHERE
+		sitterNo = #{memberNo}
+		AND category = 'house'
+	</select>
+
+	<select id="listSitterNo" resultType="int">
+		select sitterNo
+		from(
+		select sitterNo, AVG(rating)
+		from A2sitterRating
+		group by sitterNo
+		order
+		by AVG(rating) desc
+		)
+		where rownum <![CDATA[ < ]]>
+		5
+	</select>
+
+	<select id="searchTopRanker" parameterType="int" resultType="sitter">
+		select * from a2sitter
+		where memberNo = #{sitterNo}
+	</select>
+
+	<select id="searchOnePhoto" parameterType="int" resultType="photo">
+		select * from a2photo
+		where sitterno = #{memberNo} and category = 'sitter'
+	</select>
+	
+	<select id="searchUnavailableDate" parameterType="int" resultType="calendar">
+		select * 
+		from a2calendar
+		where memberno = #{memberNo}
+	</select>
+	
+	<!-- 시팅 리스트 반환 -->
+	<select id="pullSittingList" parameterType="HashMap" resultType="sitting">
+		SELECT * FROM a2sitting WHERE sitterNo = #{sitterNo} AND status = #{status}
+	</select>
+	
+	<!-- 시팅완료 시팅리스트 -->
+	<select id="searchCompletedSitting" parameterType="int" resultType="sitting">
+		select * from a2sitting
+		where sitterNo = #{sitterNo} and status = 'completed'
+	</select>
+	
+	<select id="searchPhotoList" parameterType="int" resultType="photo">
+		select * from a2photo
+		where petNo = #{petNo} and category = 'pet'
+	</select>
+	
+	<select id="searchPet" parameterType="hashmap" resultType="pet">
+		select * from a2pet
+		where petNo = #{petNo} and memberNo = #{memberNo}
+	</select>
+	
+	<!-- sittingPhoto 리스트 구하기 -->
+	<select id="searchSittingPhotoList" parameterType="int" resultType="photo">
+		select * from a2photo
+		where sittingNo = #{savedSittiongNo}
+	</select>
+	
+	<!-- 시터 평균 점수 -->
+	<select id="pullAvgRate" parameterType="int" resultType="double">
+		select avg(rating) from a2sitterrating where sitterNo = #{sitterNo} 
+	</select>
+	
+	<!-- 좌표로 시터 찾기 -->
+	<select id="searchSitterByLatAndLng" parameterType="HashMap" resultMap="associationResultMap">
+		SELECT
+		s.*, m.name, m.address1, m.address2, m.memberID, m.lat, m.lng, p.photoNo
+		FROM
+		A2SITTER s
+		JOIN A2MEMBER m
+		ON s.memberNo = m.memberNo
+		JOIN A2PHOTO p
+		ON s.memberNo = p.sitterNo
+		WHERE
+		m.lat BETWEEN #{lat} - 0.5 AND #{lat} + 0.5
+		AND
+		m.lng BETWEEN #{lng} - 0.5 AND #{lng} + 0.5
+		AND p.category = 'sitter'
+		<if test="availableCategory != null">
+		AND s.availableCategory = #{availableCategory}
+        </if>
+		<if test="option1 != null">
+		AND	s.option1 = #{option1}
+		</if>
+		
+		<if test="option2 != null">
+		AND	s.option2 = #{option2}
+		</if>
+		
+		<if test="option3 != null">
+		AND	s.option3 = #{option3}
+		</if>
+	</select>
+
+</mapper>

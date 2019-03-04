@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Admin">
+	<select id="showSitterRequestList" resultType="sitter">
+		SELECT * FROM a2sitter WHERE status = 'request'
+	</select>
+	
+	<select id="showSitterRequest" parameterType="int">
+		SELECT * FROM a2sitter WHERE memberno = #{sitterno}
+	</select>
+	
+	<update id="approveRequest" parameterType="int">
+		UPDATE a2sitter
+		SET status = 'approved'
+		WHERE memberNo = #{sitterNo}
+	</update>
+	
+	<update id="refuseRequest" parameterType="int">
+		UPDATE a2sitter
+		SET status = 'refused'
+		WHERE memberNo = #{sitterNo}
+	</update>
+	
+</mapper>

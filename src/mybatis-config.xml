@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- DB접속정보 값을 가지고 있는 파일 -->
+	<properties resource="db.properties" />
+	
+	<!-- type alias 지정 -->
+	<typeAliases>
+		<typeAlias type="org.petopia.vo.Member" alias="member"/>
+		<typeAlias type="org.petopia.vo.Sitter" alias="sitter"/>
+		<typeAlias type="org.petopia.vo.Pet" alias="pet"/>
+		<typeAlias type="org.petopia.vo.Sitting" alias="sitting"/>
+		<typeAlias type="org.petopia.vo.Transaction" alias="transaction"/>
+		<typeAlias type="org.petopia.vo.SitterRating" alias="sitterRating"/>
+		<typeAlias type="org.petopia.vo.Message" alias="message"/>
+		<typeAlias type="org.petopia.vo.Favorite" alias="favorite"/>
+		<typeAlias type="org.petopia.vo.Photo" alias="photo"/>
+		<typeAlias type="org.petopia.vo.Calendar" alias="calendar"/>
+		<typeAlias type="org.petopia.vo.VideoChat" alias="videoChat"/>
+	</typeAliases>
+	
+	<!-- DB접속 정보 셋팅 -->
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<!-- SQL문 정의한 파일 포함 -->
+	<mappers>
+		<mapper resource="mapper/memberMapper.xml" />
+		<mapper resource="mapper/sitterMapper.xml" />
+		<mapper resource="mapper/petMapper.xml" />
+		<mapper resource="mapper/adminMapper.xml" />
+		<mapper resource="mapper/sittingMapper.xml" />
+	</mappers>
+	
+</configuration>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <package name="sitter" namespace="/" extends="default">
+
+		<!-- 로그인 시 시터검색 -->
+		<action name="searchSitter" class="org.petopia.action.SitterAction" method="searchSitter">
+			<result>/jsp/main.jsp</result>
+		</action>
+		
+		<!-- 주소정보를 파라미터로 받아 시터검색을 ajax로 하기 위해 강제적으로 만든 Action -->
+      	<action name="searchAddressSitter" class="org.petopia.action.SitterAction" method="goSearchAjax">
+      		<result>/jsp/search.jsp</result>
+      	</action>
+      	
+      	<action name="searchSitter" class="org.petopia.action.SitterAction" method="searchAddressSitterByLatAndLng">
+      		<result>/jsp/search.jsp</result>
+      	</action>
+      	
+      	<!-- 주소정보를 파라미터로 받아 시터검색 -->
+      	<action name="sitterList" class="org.petopia.action.SitterAction" method="searchAddressSitterByLatAndLng">
+      		<result type="json"></result>
+      	</action>
+      	
+      	<action name="searchTopRanking" class="org.petopia.action.SitterAction" method="topSitterList">
+      		<result type="json"></result>
+      	</action>
+      	
+      	<!-- 파일 다운로드(사진 가져올 때)-->
+      	<action name="download" class="org.petopia.action.FileDownloadAction">
+      		<result type="stream">
+				<param name="ContentType">${ContentType}</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">${contentDisposition}</param> 
+				<param name="bufferSize">1024</param>
+				<param name="contentLength">${contentLength}</param>
+			</result>
+      	</action>
+      	
+      	<!-- 펫시터 신청 ==> 펫시터 등록 -->
+		<action name="askSitterQualificationPage" class="org.petopia.action.SitterAction" method="askSitterQualificationPage">
+			<result>/jsp/askSitterQualificationPage.jsp</result>
+		</action>      	
+      	
+      	<!-- 펫시터 디테일 정보  -->
+      	<action name="sitterDetail" class="org.petopia.action.SitterAction" method="sitterDetail">
+      		<interceptor-ref name="loginInterceptorStack"/>
+      		<result>/jsp/sitterDetails.jsp</result>
+      	</action>
+      	
+ 		<!-- 불가능일자 리스트 가져오기 ajax -->
+      	<action name="searchUnavailableDateList" class="org.petopia.action.SitterAction" method="searchUnavailableDate">
+      		<result type="json"></result>
+      	</action>
+      	
+      	<!-- new시터 페이지(현재진행중인 시팅페이지) -->
+      	<action name="progressSittingPage" class="org.petopia.action.SitterAction" method="progressSittingPage">
+      		<result>/jsp/progressSittingPage.jsp</result>
+      	</action>
+      	
+      	<!-- 신청들어온 시팅페이지 -->
+      	<action name="requestedSittingPage" class="org.petopia.action.SitterAction" method="requestedSittingPage">
+      		<result>/jsp/requestedSittingPage.jsp</result>
+      	</action>
+      	
+      	<!-- 수락은 했지만 시팅이 시작되지않은 시팅페이지 -->
+      	<action name="approvedSittingPage" class="org.petopia.action.SitterAction" method="approvedSittingPage">
+      		<result>/jsp/approvedSittingPage.jsp</result>
+      	</action>
+      	
+      	<!-- 시팅 포토 업로드 -->
+      	<action name="uploadSittingPhoto" class="org.petopia.action.SitterAction" method="uploadSittingPhoto">
+      		<result>/jsp/checkPhoto.jsp</result>
+      	</action>
+      	
+      	<!-- sittingNo 저장 -->
+      	<action name="saveSittingNo" class="org.petopia.action.SitterAction" method="saveSittingNo">
+      		<result type="json"></result>
+      	</action>
+      	
+      	
+      	
+    </package>
+
+</struts>

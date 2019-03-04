@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+    <package name="pet" namespace="/" extends="default">
+
+		<action name="goInsertPet">
+			<result>/jsp/insertPet.jsp</result>
+		</action>
+		
+		<!-- //TODO 마이페이지로 리턴? ajax로 처리? -->
+		<action name="insertPet" class="org.petopia.action.PetAction" method="insertPet">
+			<result type="redirect">myPetListPage.action</result>
+		</action>
+		
+		<action name="goUpdatePet" class="org.petopia.action.PetAction" method="goUpdatePet">
+			<result type="redirect">main.action</result>
+		</action>
+      	
+    </package>
+
+</struts>

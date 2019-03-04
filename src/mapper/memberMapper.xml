@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Member">
+
+	<insert id="insertMember" parameterType="member">
+		insert into A2Member
+			(
+				memberNo
+				, memberID
+				, password
+				, name
+				, email
+				, phone
+				, address1
+				, address2
+				, lat
+				, lng
+				<if test="bound_northeast_lat != null">
+				, bound_northeast_lat
+				, bound_northeast_lng
+				, bound_southwest_lat
+				, bound_southwest_lng
+				</if>
+			)
+		values
+			(
+				SEQ_A2MEMBER_MemberNo.nextval
+				, #{memberID}
+				, #{password}
+				, #{name}
+				, #{email}
+				, #{phone}
+				, #{address1}
+				, #{address2}
+				, #{lat}
+				, #{lng}
+				<if test="bound_northeast_lat != null">
+				, #{bound_northeast_lat}
+				, #{bound_northeast_lng}
+				, #{bound_southwest_lat}
+				, #{bound_southwest_lng}
+				</if>
+			)
+	</insert>
+	
+	<select id="searchMember" parameterType="string" resultType="member">
+		select * from A2Member where memberID = #{memberID}
+	</select>
+	
+	<insert id="askSitterQualification" parameterType="sitter">
+		insert into A2SITTER
+			(
+				memberNo
+				, sex
+				, age
+				, availableCategory
+				, availableNumber
+				, availableSize
+				, houseCategory
+				, sitterComment
+				, license
+				, status
+				, pet
+				, sittingLength
+				, option1
+				, option2
+				, option3
+				, account
+			)
+		values
+			(
+				#{memberNo}
+				, #{sex}
+				, #{age}
+				, #{availableCategory}
+				, #{availableNumber}
+				, #{availableSize}
+				, #{houseCategory}
+				, #{sitterComment}
+				, #{license}
+				, 'request'
+				, #{pet}
+				, #{sittingLength}
+				, <if test='option1 == "y"'>#{option1}</if>
+				<if test="option1 == null">'n'</if>
+				, <if test='option2 == "y"'>#{option2}</if>
+				<if test="option2 == null">'n'</if>
+				, <if test='option3 == "y"'>#{option3}</if>
+				<if test="option3 == null">'n'</if>
+				, #{account}
+				
+			)
+	</insert>
+	
+	<insert id="insertPhoto" parameterType="photo">
+		insert into A2PHOTO
+			(
+				photoNo
+				<!-- , category
+				, location -->
+				, category
+				, originalfile
+				, savedfile
+				, photoDate
+				, memberNo
+				, sitterNo
+				, sittingNo
+				, petNo
+			)
+		values
+			(
+				SEQ_A2PHOTO_PhotoNo.nextval
+				<!-- , #{category}
+				, #{location} -->
+				, #{category}
+				, #{originalfile}
+				, #{savedfile}
+				, sysdate
+				, #{memberNo}
+				, #{sitterNo}
+				, #{sittingNo}
+				, #{petNo}
+			)
+	</insert>
+	
+	<insert id="insertFavorite" parameterType="favorite">
+		insert into A2FAVORITE
+			(
+				favoriteNo
+				, favoriteDate
+				, memberNo
+				, sitterNo
+			)
+		values
+			(
+				SEQ_Favorite_FavoriteNo.nextval
+				, sysdate
+				, #{memberNo}
+				, #{sitterNo}
+			)
+	</insert>
+	
+	<delete id="deleteFavorite" parameterType="map">
+		delete A2FAVORITE
+		where (memberNo = #{memberNo}) and
+			  (sitterNo = #{sitterNo})
+	</delete>
+	
+	<insert id="insertUnavailableDate" parameterType="calendar">
+		insert into A2CALENDAR
+			(
+				MemberNo
+				, UnavailableDate
+			)
+		values
+			(
+				#{memberNo}
+				, #{unavailableDate}
+			)
+	</insert>
+
+	<select id="searchMyPet" parameterType="int" resultType="pet">
+		select * from a2pet
+		where memberNo = #{memberNo}
+	</select>
+	
+	<insert id="insertSitting" parameterType="sitting">
+		insert into a2sitting
+			(
+				sittingNo
+				, memberNo
+				, sitterNo
+				, petNo
+				, status
+				, requestDate
+				, startDate
+				, endDate
+				, option1
+				, option2
+				, option3
+				, price
+			)
+		values
+			(
+				SEQ_A2SITTING_SittingNo.nextval
+				, #{memberNo}
+				, #{sitterNo}
+				, #{petNo}
+				, #{status}
+				, sysdate
+				, #{startDate}
+				, #{endDate}
+				, #{option1}
+				, #{option2}
+				, #{option3}
+				, #{price}
+			)	
+	</insert>
+	
+	<select id="searchSitter" parameterType="int" resultType="sitter">
+		select * from a2sitter where memberNo = #{memberNo}
+	</select>
+</mapper>
